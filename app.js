@@ -9,7 +9,11 @@ var mongoose = require('mongoose');
 var config = require('./config');
 
 require('./models/Users');
-mongoose.connect(config.database);
+require('./models/Location');
+require('./models/SavedPlaces');
+mongoose.connect(config.database, (err) => {
+  if (err) throw err;
+});
 
 var app = express();
 
@@ -30,11 +34,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 var routes = require('./routes/index');
-var authenticate = require('./routes/authenticate');
+var users = require('./routes/users');
 var locations = require('./routes/locations');
 
 app.use('/', routes);
-app.use('/api/authentication', authenticate);
+app.use('/api/users', users);
 app.use('/api/locations', locations);
 
 // catch 404 and forward to error handler

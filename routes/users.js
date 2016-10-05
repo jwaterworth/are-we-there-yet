@@ -3,11 +3,20 @@ var router = express.Router();
 var passport = require('passport');
 var jwt = require('express-jwt');
 var mongoose = require('mongoose');
+var debug = require('debug')('awty');
 
 var auth = jwt({ secret: 'SECRET', userProperty: 'payload' });
 var User = mongoose.model('User');
 
 var router = express.Router();
+
+router.get('/users', (req, res, next) => {
+  User.find({}, (err, users) => {
+    if (err) { return next(err); }
+
+    return res.json(users);
+  });
+});
 
 router.post('/register', (req, res, next) => {
   if (!req.body.username || !req.body.password) {
